@@ -1,0 +1,115 @@
+#include "ns3/netanim-module.h"
+
+
+
+// first.cc snippet
+
+ApplicationContainer clientApps = echoClient.Install (nodes.Get (0));
+
+clientApps.Start (Seconds (2.0));
+
+clientApps.Stop (Seconds (10.0));
+
+AnimationInterface anim(animFile);
+
+anim.SetConstantPosition(nodes.Get(0),1.0,2.0);
+
+anim.SetConstantPosition(nodes.Get(1),45.0,60.0);
+
+
+
+AsciiTraceHelper ascii;
+
+pointToPoint.EnableAsciiAll(ascii.CreateFileStream("first.tr"));
+
+
+
+Simulator::Run ();
+
+Simulator::Destroy ();
+
+return 0;
+
+
+
+// second.cc snippet
+
+ApplicationContainer clientApps = echoClient.Install (p2pNodes.Get (0));
+
+clientApps.Start (Seconds (2.0));
+
+clientApps.Stop (Seconds (10.0));
+
+
+
+Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
+AnimationInterface anim(animFile);
+
+anim.SetConstantPosition(p2pNodes.Get(0),1.0,2.0);
+
+anim.SetConstantPosition(csmaNodes.Get(0),45.0,60.0);
+
+anim.SetConstantPosition(csmaNodes.Get(1),55.0,60.0);
+
+anim.SetConstantPosition(csmaNodes.Get(2),65.0,60.0);
+
+anim.SetConstantPosition(csmaNodes.Get(3),75.0,60.0);
+
+
+
+AsciiTraceHelper ascii;
+
+pointToPoint.EnableAsciiAll(ascii.CreateFileStream("second.tr"));
+
+csma.EnableAsciiAll(ascii.CreateFileStream("second1.tr"));
+
+
+
+Simulator::Run ();
+
+Simulator::Destroy ();
+
+return 0;
+
+}
+
+
+
+// third.cc snippet
+
+ApplicationContainer clientApps = echoClient.Install (csmaNodes.Get (0));
+
+clientApps.Start (Seconds (2.0));
+
+clientApps.Stop (Seconds (10.0));
+
+
+
+Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
+AnimationInterface anim(animFile);
+
+anim.SetConstantPosition(csmaNodes.Get(0), 45.0, 60.0);
+
+anim.SetConstantPosition(csmaNodes.Get(1), 55.0, 60.0);
+
+anim.SetConstantPosition(csmaNodes.Get(2), 65.0, 60.0);
+
+anim.SetConstantPosition(csmaNodes.Get(3), 75.0, 60.0);
+
+
+
+AsciiTraceHelper ascii;
+
+csma.EnableAsciiAll(ascii.CreateFileStream("third.tr"));
+
+
+
+Simulator::Run ();
+
+Simulator::Destroy ();
+
+return 0;
+
+}

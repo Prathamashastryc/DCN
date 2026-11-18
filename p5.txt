@@ -1,0 +1,33 @@
+import socket
+
+# Client
+def udp_client():
+    addr = ('127.0.0.1', 6000)
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as c:
+        while True:
+            msg = input("Msg: ")
+            c.sendto(msg.encode('utf-8'), addr)
+            if msg == "goodbye":
+                break
+
+if __name__ == '__main__':
+    udp_client()
+
+
+import socket
+
+# Server
+def udp_server():
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.bind(('', 6000))
+        print("UDP server listening on port 6000...")
+        while True:
+            data, addr = s.recvfrom(1024)
+            msg = data.decode('utf-8')
+            print(f"Received from {addr}: {msg}")
+            if msg == "goodbye":
+                print("Exiting...")
+                break
+
+if __name__ == '__main__':
+    udp_server()

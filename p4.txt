@@ -1,0 +1,39 @@
+import socket
+
+# Client
+def run_client():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as c:
+        c.connect(('localhost', 1111))
+        while True:
+            msg = input("Msg: ")
+            c.sendall(msg.encode('utf-8'))
+            if msg == "goodbye":
+                break
+            reply = c.recv(1024).decode('utf-8')
+            print("Echo:", reply)
+
+if __name__ == '__main__':
+    run_client()
+
+
+import socket
+
+# Server
+def run_server():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(('localhost', 1111))
+        s.listen(1)
+        print("Server listening on port 1111...")
+        conn, addr = s.accept()
+        with conn:
+            print(f"Connected by {addr}")
+            while True:
+                msg = conn.recv(1024).decode('utf-8')
+                if not msg or msg == "goodbye":
+                    break
+                print("Received:", msg)
+                conn.sendall(msg.encode('utf-8'))
+
+if __name__ == '__main__':
+    run_server()

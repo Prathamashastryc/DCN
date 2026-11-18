@@ -1,0 +1,37 @@
+# leaky_bucket.py
+import random
+
+class LeakyBucket:
+    def __init__(self, bucket_size, output_pkt_size):
+        self.storage = 0
+        self.bucket_size = bucket_size
+        self.output_pkt_size = output_pkt_size
+
+    def simulate(self, no_of_pkts):
+        for i in range(1, no_of_pkts + 1):
+            space_left = self.bucket_size - self.storage
+            pkt_size = random.randint(1, 30)
+            print(f"\n--- Packet {i} ---")
+            print(f"Incoming packet size: {pkt_size}")
+            if pkt_size <= space_left:
+                self.storage += pkt_size
+                print(f"Packet accepted. Buffer: {self.storage}/{self.bucket_size}")
+            else:
+                print(f"Packet dropped! (Requires {pkt_size}, available space {space_left})")
+                print(f"Buffer: {self.storage}/{self.bucket_size}")
+
+            transferred = min(self.storage, self.output_pkt_size)
+            self.storage -= transferred
+            print(f"Transmitted: {transferred} | Left in buffer: {self.storage}")
+
+        if self.storage > 0:
+            print("\n--- Emptying Remaining Buffer ---")
+        while self.storage > 0:
+            transferred = min(self.storage, self.output_pkt_size)
+            self.storage -= transferred
+            print(f"Transmitted: {transferred} | Left in buffer: {self.storage}")
+
+if __name__ == "__main__":
+    pkts = int(input("Enter number of packets: "))
+    bucket = LeakyBucket(50, 5)
+    bucket.simulate(pkts)

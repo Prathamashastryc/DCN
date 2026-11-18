@@ -1,0 +1,42 @@
+#receiver.py
+import socket
+
+def start_receiver():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind(('localhost', 6879))
+        server.listen(1)
+        print("Receiver listening on port 6879...")
+        conn, _ = server.accept()
+        with conn:
+            n = int.from_bytes(conn.recv(4), 'big')
+            frames = []
+            for _ in range(n):
+                length = int.from_bytes(conn.recv(2), 'big')
+                frames.append(conn.recv(length).decode('utf-8'))
+            print("Received:", "".join(frames))
+
+if __name__ == '__main__':
+    start_receiver()
+
+
+#frame/sender.py
+import socket
+
+def start_sender():
+    n = int(input("Frames to send: "))
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(('localhost', 6879))
+        s.sendall(n.to_bytes(4, 'big'))
+        for _ in range(n):
+            data = input("Frame data: ")
+            encoded = data.encode('utf-8')
+            s.sendall(len(encoded).to_bytes(2, 'big') + encoded)
+
+if __name__ == '__main__':
+    start_sender()
+
+
+if __name__ == '__main__':
+    start_sender()
+

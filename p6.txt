@@ -1,0 +1,41 @@
+# bellman_ford.py
+class Edge:
+    def __init__(self, u, v, w):
+        self.u = u
+        self.v = v
+        self.w = w
+
+class BellmanFord:
+    def __init__(self, n):
+        self.N = n
+        self.d = [9999] * n
+        self.edges = []
+
+    def add_edge(self, u, v, w):
+        self.edges.append(Edge(u, v, w))
+
+    def compute(self, s):
+        self.d[s] = 0
+        for _ in range(self.N - 1):
+            for e in self.edges:
+                if self.d[e.u] != 9999 and self.d[e.v] > self.d[e.u] + e.w:
+                    self.d[e.v] = self.d[e.u] + e.w
+
+        for e in self.edges:
+            if self.d[e.u] != 9999 and self.d[e.v] > self.d[e.u] + e.w:
+                print("Negative weight cycle detected")
+                return
+
+        for i in range(self.N):
+            print(f"Distance from {s} to {i}: {self.d[i]}")
+
+if __name__ == '__main__':
+    n = int(input("Enter number of vertices: "))
+    e = int(input("Enter number of edges: "))
+    bf = BellmanFord(n)
+    print("Enter edges (source destination weight):")
+    for _ in range(e):
+        u, v, w = map(int, input().split())
+        bf.add_edge(u, v, w)
+    s = int(input("Enter source vertex: "))
+    bf.compute(s)
